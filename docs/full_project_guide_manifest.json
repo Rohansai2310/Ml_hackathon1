@@ -1,0 +1,144 @@
+{
+  "application_commit": "c74e2438f0e102c403cc9e537acc89b6e2da47b6",
+  "document": "PathSnap_Complete_Project_and_Code_Guide.pdf",
+  "source_files": [
+    {
+      "file": "src/pathsnap/config.py",
+      "lines": 38,
+      "sha256": "2a97671031c951b540baf450322869e73eb89f913939b2e60268b55a23f26b81"
+    },
+    {
+      "file": "src/pathsnap/data_io.py",
+      "lines": 59,
+      "sha256": "6418d3af684abd4c1b449bd0b8a76011ff3f293d34900c6974fe07d5d702eb95"
+    },
+    {
+      "file": "src/pathsnap/geo.py",
+      "lines": 49,
+      "sha256": "b7600cc3a9a7b5e5fa715cd0c4e4a7da2580bcfc4a7f5f78d3c228547265c350"
+    },
+    {
+      "file": "src/pathsnap/network.py",
+      "lines": 40,
+      "sha256": "2e277861243cf5d6af0b5ebbcb6ec5475fb3301ae582c9138cdb489ebd11e353"
+    },
+    {
+      "file": "src/pathsnap/candidates.py",
+      "lines": 38,
+      "sha256": "8669b5138b4ce3014c4b40ab7f02d27921ffd9d29960751306f0000fe0665c7d"
+    },
+    {
+      "file": "src/pathsnap/features.py",
+      "lines": 117,
+      "sha256": "bf205679e7b41f202acde4e1b4d5d3ce62c069e2d9b7e0c4635e31241f3864af"
+    },
+    {
+      "file": "src/pathsnap/labels.py",
+      "lines": 46,
+      "sha256": "95923f220ee5816d757fecf6437e5a9f2c38ebb78a40b44014f4a4702df5d79b"
+    },
+    {
+      "file": "src/pathsnap/eda.py",
+      "lines": 255,
+      "sha256": "44de085f3747573eccc7121ffcd1fc1181936375f886aec2b503c334b8d88f9c"
+    },
+    {
+      "file": "src/pathsnap/build.py",
+      "lines": 81,
+      "sha256": "ed37a0f3d9bc99c980caa85d9396b2758ffb791c4cc6a55e32ccdae977690595"
+    },
+    {
+      "file": "src/pathsnap/data.py",
+      "lines": 99,
+      "sha256": "f80abfe0c30a10d0a26f9ef23de29117a87d530b1d3985723e1793854580ca1b"
+    },
+    {
+      "file": "src/pathsnap/training_handoff.py",
+      "lines": 79,
+      "sha256": "a1dfb0ea71e7b04c488aee0dcb95a80f302ce30eaae84d7181729ed52cff9955"
+    },
+    {
+      "file": "src/pathsnap/dataset.py",
+      "lines": 30,
+      "sha256": "17c65e62a436c7b531fac2bc6472bf786ba0d04cf166a5d2d3293acd81891d94"
+    },
+    {
+      "file": "src/pathsnap/models.py",
+      "lines": 60,
+      "sha256": "32ae800cc7af45572a97719d8c00e26e05c6d39db5ab6f904c1674622e11af48"
+    },
+    {
+      "file": "src/pathsnap/metrics.py",
+      "lines": 50,
+      "sha256": "3429c318ddc6674fe4513177ab9d0b30134a532f5b3ba552ea0409b56c9e071f"
+    },
+    {
+      "file": "src/pathsnap/train.py",
+      "lines": 318,
+      "sha256": "03b04c946cf257482bb0b4a33ea350ded003776352c44d5861a0d01f5a17b72c"
+    },
+    {
+      "file": "src/pathsnap/selected_forest.py",
+      "lines": 90,
+      "sha256": "362abd081ea09efe44777eee191e9ce2f44a0071fa674be4170778dcc7776113"
+    },
+    {
+      "file": "src/pathsnap/hmm.py",
+      "lines": 247,
+      "sha256": "8a65fbb7d2f309a42389ee9a51a8dff6cb4a8545e6fad4b3f0ef87e12c79c058"
+    },
+    {
+      "file": "src/pathsnap/tune_hmm.py",
+      "lines": 215,
+      "sha256": "cd3f8757d0b191074f0a4a29bffaeb3be3fa28e9de3daf8fbc8bfdc83fd34822"
+    },
+    {
+      "file": "src/pathsnap/evaluate_forest.py",
+      "lines": 271,
+      "sha256": "573c7eec3a28e8db02981d006f64dccfc71fe82389a898e801ddfe9f31924f68"
+    },
+    {
+      "file": "src/pathsnap/api.py",
+      "lines": 175,
+      "sha256": "b367b049f47d698d823054e5626102885493c4d07147076c5a1087a7ef524728"
+    },
+    {
+      "file": "src/pathsnap/maps.py",
+      "lines": 63,
+      "sha256": "af4103368b6d7434e844dd359a2ce639970746d5d0dfab84f1dee22f4a7355c3"
+    },
+    {
+      "file": "src/pathsnap/cli.py",
+      "lines": 88,
+      "sha256": "61c4ea8442b95891171fe3d9cc125dd5bfdc24639779704d5fc5d3fea1968995"
+    },
+    {
+      "file": "src/pathsnap/kaggle_bundle.py",
+      "lines": 91,
+      "sha256": "bd3fd68fea4e8e1a294c8105ab7175579b7894d74a2f5d203113478821283f45"
+    },
+    {
+      "file": "src/pathsnap/report_baselines.py",
+      "lines": 90,
+      "sha256": "ab9138fbc4a360d670e9cbb6dc42ca5f8decab425f1d4ee752b029e94eff3025"
+    },
+    {
+      "file": "src/pathsnap/docgen.py",
+      "lines": 33,
+      "sha256": "c84a526692a50a05ed23eeae2b84fe5d14a9127ea5beb84a06131657b384383f"
+    },
+    {
+      "file": "src/pathsnap/__init__.py",
+      "lines": 1,
+      "sha256": "2ccababd3511db12b7ab124a31c33171d4d6067b1b5f15b7b8132a3ab1c8741c"
+    },
+    {
+      "file": "src/pathsnap/__main__.py",
+      "lines": 2,
+      "sha256": "cf7390a2508a0fcad4777a4a629fc5212ab655cb45845975995f835676a834e3"
+    }
+  ],
+  "all_application_source_lines": 2725,
+  "manuscript_sha256": "bb03e2597c5cd96dd61e5a9ce50ee5b34a871d1d963c6922930ed1e7bcfe936f",
+  "scope": "Complete src/pathsnap Python source, statement-level notes, project narrative and archived evidence"
+}

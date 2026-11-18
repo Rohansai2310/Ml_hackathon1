@@ -1,0 +1,46 @@
+{
+  "server_binding": "0.0.0.0:8077",
+  "network_test": "HTTP health and catalog through the actual Wi-Fi interface on this host",
+  "physical_second_laptop_tested": false,
+  "health": {
+    "status": "healthy",
+    "model_loaded": true,
+    "decoder_configured": true
+  },
+  "trip_count": 10,
+  "concurrent_client_requests": [
+    {
+      "trip_id": "00000015",
+      "observations": 6854,
+      "exact_match_with_frozen_predictions": true,
+      "evaluation": {
+        "status": "complete",
+        "rf_top1_accuracy": 0.5930045368066735,
+        "hmm_top1_accuracy": 0.8052100102444022,
+        "hmm_correct_points": 5502,
+        "known_points": 6833,
+        "unresolved_points": 21,
+        "candidate_macro_f1": 0.7631382593237485,
+        "candidate_log_loss": 0.13704028133290386,
+        "note": "Pointwise accuracy against valid derived references (within 50 m). Repeat development evaluation; references are read only after inference."
+      }
+    },
+    {
+      "trip_id": "00000049",
+      "observations": 2642,
+      "exact_match_with_frozen_predictions": true,
+      "evaluation": {
+        "status": "complete",
+        "rf_top1_accuracy": 0.9825889477668432,
+        "hmm_top1_accuracy": 0.9958364875094625,
+        "hmm_correct_points": 2631,
+        "known_points": 2642,
+        "unresolved_points": 0,
+        "candidate_macro_f1": 0.9875559076894214,
+        "candidate_log_loss": 0.015931478321485684,
+        "note": "Pointwise accuracy against valid derived references (within 50 m). Repeat development evaluation; references are read only after inference."
+      }
+    }
+  ],
+  "note": "Client and server ran as separate local processes; a second physical laptop still needs to connect over Wi-Fi."
+}

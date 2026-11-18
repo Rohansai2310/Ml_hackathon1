@@ -7,6 +7,8 @@ from typing import Optional
 
 import numpy as np
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from . import config, data_io as io
@@ -93,8 +95,8 @@ def health():
     }
 
 
-@app.post("/match", response_model=MatchResponse)
-def match_trip(request: MatchRequest):
+def _predict_trip(request: MatchRequest):
+    """Finish label-free inference before an evaluation endpoint can read references."""
     if _model is None:
         raise HTTPException(
             status_code=503,
@@ -155,7 +157,7 @@ def match_trip(request: MatchRequest):
             **_decoder_parameters,
         )
 
-        return MatchResponse(
+        response = MatchResponse(
             trip_id=request.trip_id,
             partition=request.partition,
             predicted_arc_ids=predicted.point_arc_ids,
@@ -166,6 +168,7 @@ def match_trip(request: MatchRequest):
             route_segments=predicted.route_segments,
             break_reasons=predicted.break_reasons,
         )
+        return response, trip, geom, candidates, positive_probabilities, predicted
 
     except HTTPException:
         raise
@@ -173,3 +176,55 @@ def match_trip(request: MatchRequest):
         raise HTTPException(status_code=404, detail=str(exc))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.post("/match", response_model=MatchResponse)
+def match_trip(request: MatchRequest):
+    return _predict_trip(request)[0]
+
+
+@app.get("/trips")
+def trips():
+    """Discover evaluator trip options from the server, without reading references."""
+    root = Path(os.environ.get("PATHSNAP_DATA_ROOT", config.DATA_DIR))
+    identifiers = [tid for tid in io.list_trips("evaluator_test", root)
+                   if len(tid) == 8 and tid.isascii() and tid.isdigit()
+                   and all((root / "evaluator_test" / tid / f"{tid}.{ext}").is_file()
+                           for ext in ("track", "nodes", "arcs"))]
+    return {"partition": "evaluator_test", "trips": identifiers, "count": len(identifiers)}
+
+
+@app.post("/evaluate")
+def evaluate_trip(request: MatchRequest):
+    """Infer first, then evaluate frozen choices and return map-ready results."""
+    from time import perf_counter
+    from .presentation import present_result
+    if request.partition != "evaluator_test":
+        raise HTTPException(status_code=400, detail="The evaluator UI supports evaluator_test trips only.")
+    started = perf_counter()
+    context = _predict_trip(request)
+    try:
+        payload = present_result(*context)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    payload["elapsed_seconds"] = round(perf_counter() - started, 3)
+    payload["model"] = {"classifier": context[0].model_used, "sha256": _model_sha256,
+                        "decoder_parameters": {"beta": 50.0, "same_arc_jitter_m": 0.0,
+                            "emission_mode": "probability", **_decoder_parameters}}
+    print(f"Completed evaluator request: trip={request.trip_id}, points={context[0].number_of_gps_points}, "
+          f"RF+HMM={payload['evaluation'].get('hmm_top1_accuracy')}, seconds={payload['elapsed_seconds']}", flush=True)
+    return payload
+
+
+WEB_DIR = Path(__file__).with_name("web")
+app.mount("/assets", StaticFiles(directory=WEB_DIR), name="assets")
+
+
+@app.get("/ui", include_in_schema=False)
+def ui():
+    return FileResponse(WEB_DIR / "index.html")
+
+
+@app.get("/client-config.json", include_in_schema=False)
+def client_configuration():
+    return {"api_base": "", "server": "This FastAPI server"}

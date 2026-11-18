@@ -1,0 +1,2 @@
+# Optional PDF generation only; not required by model training or the API.
+reportlab>=4,<6

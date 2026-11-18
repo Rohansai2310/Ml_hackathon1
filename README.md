@@ -5,7 +5,29 @@ This repository includes preprocessing, candidate generation, feature engineerin
 classifier training, metric HMM/Viterbi decoding and a FastAPI inference backend.
 See [the HMM review and usage guide](docs/hmm_review.md) for integration details.
 
-Start two-client integration with [the shared backend API contract](docs/CLIENT_API.md).
+Read the [simple three-page project explanation](docs/PathSnap_Simple_Project_Explanation.pdf).
+The [detailed numbered code guide](docs/PathSnap_Complete_Project_and_Code_Guide.pdf)
+is a historical snapshot of the 27 application modules at c74e243, before the
+two-laptop UI was added. Its [editable explanation](docs/full_project_guide.md)
+and [source fingerprints](docs/full_project_guide_manifest.json) accompany it.
+
+The **two-laptop interface is implemented**. On the same Wi-Fi, Laptop 1 runs
+FastAPI and the model; Laptop 2 runs the interface and connects to Laptop 1's IP.
+See [the setup commands and API contract](docs/CLIENT_API.md) and
+[actual UI screenshots and verification](outputs/experiments/two_laptop_demo_001/README.md).
+
+```bash
+# Laptop 1, with the frozen model and evaluator_test/ available:
+python scripts/run_server.py --data-root .. --port 8000
+
+# Laptop 2, replace the example with Laptop 1's Wi-Fi IP:
+python scripts/run_client.py --server http://192.168.1.10:8000
+# Open http://127.0.0.1:8501 on Laptop 2.
+```
+
+The UI laptop needs only Python's standard library and a browser. It displays
+all ten server trips, route layers, RF/HMM pointwise accuracy, segment boundaries
+and downloads. A built-in road view works offline; Folium street tiles need internet.
 [Training-only HMM tuning](docs/hmm_tuning.md) runs separately and can update the
 decoder without changing the client request/response contract.
 
@@ -53,7 +75,7 @@ pathsnap feature-report         # evidence for "why these features"
 pathsnap map --trip 00000048 --partition train          # interactive Folium map
 pathsnap inspect-trip --trip 00000048 --partition train # print candidates/features for a few points
 pathsnap all                    # check + explore + build-features + feature-report
-python -m pytest -q tests       # 5 tests incl. leakage guard
+python -m pytest -q tests       # application and two-laptop integration checks
 ```
 (`python -m pathsnap <cmd>` works too.)
 

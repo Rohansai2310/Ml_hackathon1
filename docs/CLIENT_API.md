@@ -1,88 +1,175 @@
-# Shared backend for two clients
+# Two laptops on the same Wi-Fi
 
-Use the `model-training` branch. Both clients call the same FastAPI backend;
-neither client needs to load a model or run HMM locally. The backend loads one
-frozen Random Forest and runs the same feature generation/decoder for requests.
+**Laptop 1 (your laptop)** runs FastAPI, one frozen Random Forest, HMM/Viterbi,
+raw evaluator trips, reference evaluation and map generation. **Laptop 2** runs
+only the interface. It sends requests to Laptop 1 and displays the response.
+This implements the two-laptop arrangement in `docs/guidelines/Main Guidelines.pdf`.
 
-## Start the backend
-
-From `Ml_hackathon1/`, activate the Python environment and install requirements.
-Set paths on the **server**, where the original dataset and fitted model exist:
-
-```bash
-export PYTHONPATH=src
-export PATHSNAP_MODEL_DIR=outputs/training/random_forest_selected_001
-export PATHSNAP_DECODER_CONFIG=outputs/experiments/hmm_tuning_001/decoder_configuration.json
-export PATHSNAP_DATA_ROOT=..
-python -m uvicorn pathsnap.api:app --host 127.0.0.1 --port 8000
+```text
+Laptop 2 browser → Laptop 2 UI/proxy → Wi-Fi → Laptop 1 FastAPI
+                                              ↓
+                                  one Random Forest → HMM/Viterbi
+                                              ↓
+                                  evaluate frozen predictions
+                                              ↓
+Laptop 2 browser ← route geometry, metrics, Folium map and segment boundaries
 ```
 
-`PATHSNAP_DATA_ROOT` is the parent of partition folders. In the current workspace,
-`..` contains `evaluator_test/`; `../Student folder/` contains `train/` and
-`student_test/`. A combined dataset root can instead contain all three partitions.
-Use the correct server root for the partition that clients request.
+## Laptop 1: start your server
 
-The actual fitted model and raw data stay local, outside Git. A fresh clone
-requires those artifacts or the documented feature-build/refit commands. See
-`docs/random_forest_evaluation.md`. The current local demo runs on port 8077.
+Use the `model-training` branch. From the repository root, activate your existing
+Python environment, or create one and install the server dependencies:
 
-## Health and matching
+```bash
+python -m pip install -r requirements.txt
+python -m pip install -e .
+python scripts/run_server.py --data-root .. --port 8000
+```
 
-`GET /health` returns:
+The default `--host 0.0.0.0` accepts connections through the laptop's local network
+interfaces. Keep this terminal running. Use Ctrl+C to stop. There is one server
+worker and one fitted classifier; no model is installed on Laptop 2.
+
+The default model is `outputs/training/random_forest_selected_001/pipeline.joblib`.
+The default selected decoder is
+`outputs/experiments/hmm_tuning_001/decoder_configuration.json`.
+The actual fitted artifact and raw dataset stay local and are excluded from Git.
+A fresh server clone requires those files or the documented refit workflow.
+`--data-root` must be the parent of `evaluator_test/`, whose children are the ten
+trip folders. The launcher checks these paths before starting.
+
+Override artifact paths when necessary:
+
+```bash
+python scripts/run_server.py --data-root /path/to/dataset-parent \
+  --model-dir /path/to/frozen-model-directory \
+  --decoder-config outputs/experiments/hmm_tuning_001/decoder_configuration.json
+```
+
+Find **Laptop 1's Wi-Fi IPv4 address** with `ip -4 address` or `hostname -I` on
+Linux, `ipconfig` on Windows, or the Wi-Fi settings on macOS. Choose the Wi-Fi
+adapter address, not loopback or a Docker/VPN address. The address can change
+when you reconnect. `0.0.0.0` is a bind address, not the URL to type on Laptop 2.
+
+For example, if the server's Wi-Fi address is `192.168.1.10`, check from Laptop 2:
+
+```bash
+curl http://192.168.1.10:8000/health
+```
+
+A loaded server replies with:
 
 ```json
 {"status":"healthy","model_loaded":true,"decoder_configured":true}
 ```
 
-Both clients send the same request shape to `POST /match`:
+The current workspace demo uses port **8077**, with the client on **8501**. Use
+8077 instead of 8000 when connecting to that running demo. The Wi-Fi adapter
+address observed during implementation was `10.30.202.117`; verify it again
+before the actual two-laptop demonstration.
+
+## Laptop 2: run the interface
+
+Both laptops should be on the same Wi-Fi or hotspot. Clone/download this branch
+on Laptop 2, open a terminal in the repository and run:
+
+```bash
+python scripts/run_client.py --server http://192.168.1.10:8000
+```
+
+Alternatively, extract [the small UI-only zip](../outputs/client/PathSnap_UI_Client.zip)
+on Laptop 2 and run the same command from its extracted folder. It contains only
+the launcher and interface files. Regenerate it with `python scripts/package_client.py`.
+
+Replace the example address with **Laptop 1's actual Wi-Fi IP and server port**.
+On Windows, `py scripts/run_client.py ...` also works if Python uses the `py`
+launcher. The client requires Python 3.10 or later and its standard library;
+no pip packages, model, dataset, sklearn, FastAPI or Node installation is needed.
+
+Open **http://127.0.0.1:8501** in Laptop 2's browser. The interface:
+
+1. Checks the FastAPI server and loads its evaluator trip list.
+2. Lets you choose one of the ten trips and reconstruct the route.
+3. Shows GPS points, nearby roads, reference route and RF + HMM route.
+4. Displays per-trip RF/HMM accuracy, known/unresolved reference counts,
+   observation count, route segment count and actual server processing time.
+5. Lets you toggle layers, pan/zoom, download result JSON and save a Folium map.
+
+The plain road view uses no external downloads and works without internet.
+The Folium view additionally needs internet access for its JavaScript libraries
+and street tiles. Use Folium's own layer control in that view. The left-hand
+layer checkboxes control the plain road view.
+
+The small client-side proxy forwards only `/health`, `/trips`, `/match` and
+`/evaluate` to the configured server. Browser calls remain on the client UI
+origin, so no browser CORS setup or client-IP allowlist is required. Requests go
+directly to the selected server rather than through inherited HTTP proxy settings.
+Laptop 1 does not need to know Laptop 2's IP for this request/response setup.
+
+For a quick alternative, open `http://SERVER_IP:8000/ui` directly on Laptop 2.
+That serves the same interface from Laptop 1; the separate client launcher is
+available for the demonstrated two-process/two-laptop setup.
+
+## Connection troubleshooting
+
+- Use the server's Wi-Fi IP on Laptop 2. `localhost` on Laptop 2 points to Laptop 2.
+- Keep the server terminal open and use the same port on both sides.
+- Allow inbound TCP on that server port in Laptop 1's firewall for the intended
+  local/private network. Do not disable the firewall or configure router port forwarding.
+- Guest/campus Wi-Fi may isolate devices even on the same network. If health
+  cannot be reached, try a personal hotspot that allows device-to-device traffic.
+- An HTTP 502 in the UI means its proxy could not reach the configured server.
+  An empty trip list means the server's data root does not contain the expected files.
+
+## FastAPI contract
+
+`GET /health` reports model/configuration loading. `GET /trips` returns
+`{"partition":"evaluator_test","trips":["00000015", "..."],"count":10}` using
+actual server folders. `GET /docs` provides OpenAPI documentation.
+
+Both matching endpoints accept an eight-digit trip ID:
 
 ```json
 {"trip_id":"00000023","partition":"evaluator_test"}
 ```
 
-Response fields:
+`POST /match` is label-free inference and retains the original contract:
+`predicted_arc_ids`, `segment_ids`, `route_segments`, `break_reasons`, trip/partition,
+GPS/candidate counts and `model_used`. Unmatched observations retain arc/segment
+ID `-1`. Arc IDs are local to a trip. Draw separate route segments independently.
 
-| Field | Meaning |
+`POST /evaluate` completes the same inference first, then reads references for
+server-side evaluation. Its response contains:
+
+| Field | Content |
 |---|---|
-| `trip_id`, `partition` | Identifies the server-side dataset trip |
-| `predicted_arc_ids` | One directed arc ID per GPS observation; `-1` means unmatched |
-| `segment_ids` | One segment ID per observation; `-1` means unmatched |
-| `route_segments` | Ordered arc lists, including intermediate road arcs, per connected segment |
-| `break_reasons` | Observation index to `no_candidates`, `time_gap` or `no_reachable_transition` |
-| `number_of_gps_points` | Complete input observation count |
-| `number_of_candidates` | Number of GPS/candidate pairs scored |
-| `model_used` | Classifier type, currently `RandomForestClassifier` |
+| `match` | The original matching response |
+| `evaluation` | RF and HMM per-point accuracy, correct/known/unresolved counts, candidate F1/log loss and metric limitations |
+| `geometry` | Raw GPS, nearby road lines, predicted segments and reference segments, all in longitude/latitude |
+| `map_html` | Actual Folium HTML generated from this trip's returned routes |
+| `model` | Classifier identity, model SHA-256 and effective decoder settings |
+| `elapsed_seconds` | Measured server request processing time |
 
-Arc IDs and node IDs are local to a trip. Preserve observation order. Draw each
-route segment separately; do not draw a connector across explicit segment breaks.
-Reference routes and accuracy labels are not returned by the prediction endpoint.
-Route geometry is not returned as GeoJSON yet. A mapping client must have the
-matching trip road network or agree on a geometry response with the backend team.
+Missing references leave the predicted route available and report evaluation
+`status: unavailable`. Prediction never receives the reference route. Input
+arrays are checked for changes between prediction and reference evaluation.
+The endpoint supports evaluator_test only; the original `/match` still supports
+train/student_test/evaluator_test. An optional legacy `data_root` request field
+exists for local compatibility; the UI never supplies filesystem paths.
 
-HTTP errors include 422 for malformed input/no candidates, 404 for missing GPS
-data and 503 if no model is loaded. `/docs` provides the OpenAPI contract.
+Errors include 422 for malformed input/no road candidates, 404 for missing GPS,
+400 for unsupported partitions and 503 if no model is loaded. This is a trusted
+local-network demonstration without an authentication layer or upload API.
 
-## Client integration scope
+## Verification and accuracy
 
-The current endpoint selects trips stored on the server. GPS upload, streaming
-matching, browser CORS settings and an accuracy/evaluation endpoint are not part
-of this contract yet. Agree on those additions before building clients around
-them. For browser clients on another origin, explicitly allow their origins in
-the backend's CORS configuration. For different machines, use a reachable server
-address and the project's intended network setup rather than localhost.
+The selected classifier/decoder are unchanged: **90.79% pooled pointwise accuracy**
+on the repeat evaluator benchmark and **92.19% on student testing**, against valid
+derived references. The interface shows the selected trip's score, which can be
+higher or lower than that pooled benchmark. Showing a trip is not new tuning.
 
-## Selected decoder and later accuracy improvements
-
-The optional `PATHSNAP_DECODER_CONFIG` environment variable loads a decoder
-configuration selected on training OOF predictions. Its recorded model hash must
-match the frozen classifier. Restart the backend to adopt a completed configuration:
-
-```bash
-export PATHSNAP_DECODER_CONFIG=outputs/experiments/hmm_tuning_001/decoder_configuration.json
-```
-
-The committed configuration passed student-test validation at 92.19% Top-1 and
-scored 90.79% on the repeat evaluator benchmark. Later tuning can run separately.
-Client request/response fields stay the same when decoder settings change. `/health` reports
-`decoder_configured: true`. The original measured evaluator benchmark remains
-versioned separately, so tuning does not overwrite its evidence.
+See `outputs/experiments/two_laptop_demo_001/` for test records and actual UI
+screenshots. Separate server/client processes, browser interactions, simultaneous
+requests and access through the host Wi-Fi interface were tested locally. A
+second physical laptop must still connect over the actual demonstration Wi-Fi;
+that external device and its firewall/network isolation cannot be verified here.

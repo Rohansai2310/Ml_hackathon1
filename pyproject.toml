@@ -13,3 +13,6 @@ pathsnap = "pathsnap.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+pathsnap = ["web/*.html", "web/*.css", "web/*.js"]
