@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pathsnap"
+version = "0.1.0"
+description = "PathSnap: GPS map-matching - data, candidates and features (Person 1 stage)"
+requires-python = ">=3.10"
+
+[project.scripts]
+pathsnap = "pathsnap.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

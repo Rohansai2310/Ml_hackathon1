@@ -1,0 +1,14 @@
+check,total_count,trips_affected,train_trips_affected,student_test_trips_affected
+NaN values in .track,0,0,0,0
+"Invalid coordinates (0,0 / out of range)",0,0,0,0
+Duplicate timestamps,0,0,0,0
+Timestamps going backwards,0,0,0,0
+GPS gaps > 5 s,1260,47,45,2
+GPS gaps > 30 s,135,30,28,2
+Implausible speed > 60 m/s (216 km/h),555,20,18,2
+NaN values in .nodes,0,0,0,0
+Arcs referencing a non-existent node,0,0,0,0
+Unreferenced (isolated) nodes,0,0,0,0
+Self-loop arcs,24,9,8,1
+Zero-length arcs,106,32,29,3
+Reference-route breaks (arc i end != arc i+1 start),14,11,10,1

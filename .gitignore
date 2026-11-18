@@ -1,0 +1,9 @@
+data/raw/
+__pycache__/
+*.egg-info/
+outputs/eda/_*.parquet
+outputs/features/*.parquet
+.pytest_cache/
+
+.venv/
+.qodo/

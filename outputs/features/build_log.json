@@ -1,0 +1,16 @@
+[
+  {
+    "partition": "train",
+    "trips": 80,
+    "points": 208417,
+    "candidate_rows": 2797071,
+    "seconds": 79.7
+  },
+  {
+    "partition": "student_test",
+    "trips": 10,
+    "points": 19160,
+    "candidate_rows": 329247,
+    "seconds": 7.1
+  }
+]

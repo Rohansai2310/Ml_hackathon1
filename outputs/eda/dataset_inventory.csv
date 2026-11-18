@@ -1,0 +1,12 @@
+,student_test,train
+trips,10.0,80.0
+gps_points_total,19160.0,208417.0
+points_per_trip_median,1420.0,1529.0
+points_per_trip_min,262.0,361.0
+points_per_trip_max,3958.0,19313.0
+road_nodes_median,6596.5,9608.0
+road_arcs_median,13145.0,19526.5
+road_arcs_max,56027.0,307392.0
+route_arcs_median,250.0,280.0
+trips_with_all_4_files,10.0,80.0
+trips_unreliable_reference,0.0,2.0
