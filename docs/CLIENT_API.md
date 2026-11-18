@@ -12,6 +12,7 @@ Set paths on the **server**, where the original dataset and fitted model exist:
 ```bash
 export PYTHONPATH=src
 export PATHSNAP_MODEL_DIR=outputs/training/random_forest_selected_001
+export PATHSNAP_DECODER_CONFIG=outputs/experiments/hmm_tuning_001/decoder_configuration.json
 export PATHSNAP_DATA_ROOT=..
 python -m uvicorn pathsnap.api:app --host 127.0.0.1 --port 8000
 ```
@@ -30,7 +31,7 @@ requires those artifacts or the documented feature-build/refit commands. See
 `GET /health` returns:
 
 ```json
-{"status":"healthy","model_loaded":true,"decoder_configured":false}
+{"status":"healthy","model_loaded":true,"decoder_configured":true}
 ```
 
 Both clients send the same request shape to `POST /match`:
@@ -55,6 +56,8 @@ Response fields:
 Arc IDs and node IDs are local to a trip. Preserve observation order. Draw each
 route segment separately; do not draw a connector across explicit segment breaks.
 Reference routes and accuracy labels are not returned by the prediction endpoint.
+Route geometry is not returned as GeoJSON yet. A mapping client must have the
+matching trip road network or agree on a geometry response with the backend team.
 
 HTTP errors include 422 for malformed input/no candidates, 404 for missing GPS
 data and 503 if no model is loaded. `/docs` provides the OpenAPI contract.
@@ -68,17 +71,18 @@ them. For browser clients on another origin, explicitly allow their origins in
 the backend's CORS configuration. For different machines, use a reachable server
 address and the project's intended network setup rather than localhost.
 
-## Accuracy improvements can be adopted separately
+## Selected decoder and later accuracy improvements
 
 The optional `PATHSNAP_DECODER_CONFIG` environment variable loads a decoder
 configuration selected on training OOF predictions. Its recorded model hash must
 match the frozen classifier. Restart the backend to adopt a completed configuration:
 
 ```bash
-export PATHSNAP_DECODER_CONFIG=outputs/training/hmm_tuning_001/decoder_configuration.json
+export PATHSNAP_DECODER_CONFIG=outputs/experiments/hmm_tuning_001/decoder_configuration.json
 ```
 
-Wait for that file to exist; tuning runs separately. Client request/response
-fields stay the same when decoder settings change. `/health` then reports
+The committed configuration passed student-test validation at 92.19% Top-1 and
+scored 90.79% on the repeat evaluator benchmark. Later tuning can run separately.
+Client request/response fields stay the same when decoder settings change. `/health` reports
 `decoder_configured: true`. The original measured evaluator benchmark remains
 versioned separately, so tuning does not overwrite its evidence.

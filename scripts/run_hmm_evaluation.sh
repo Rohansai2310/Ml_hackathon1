@@ -15,13 +15,17 @@ if [[ ! "$run_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
     printf 'Run name may contain letters, digits, underscores and hyphens only.\n' >&2
     exit 2
 fi
+decoder_args=()
+if [[ -n "${PATHSNAP_DECODER_CONFIG:-}" ]]; then
+    decoder_args=(--decoder-config "$PATHSNAP_DECODER_CONFIG")
+fi
 set -x
 python -m pytest -q tests
 python -m pathsnap.evaluate_forest \
     --model-dir outputs/training/random_forest_selected_001 \
     --data-root .. \
     --output "outputs/evaluation/$run_name" \
-    --with-hmm
+    --with-hmm "${decoder_args[@]}"
 python scripts/report_evaluator_forest.py \
     --model-dir outputs/training/random_forest_selected_001 \
     --evaluation-dir "outputs/evaluation/$run_name" \

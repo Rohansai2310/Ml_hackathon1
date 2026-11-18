@@ -1,0 +1,10 @@
+{
+  "mean_fold_top1": 0.856295968426614,
+  "pooled_top1": 0.8564203303544254,
+  "mean_trip_top1": 0.8718438008396779,
+  "correct": 154768,
+  "known": 180715,
+  "trips": 78,
+  "segments": null,
+  "seconds": 2.0098716319998857
+}

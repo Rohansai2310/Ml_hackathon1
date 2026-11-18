@@ -1,5 +1,11 @@
 # HMM/Viterbi review and integration
 
+Update: subsequent training-only decoder tuning improved student-test accuracy
+to 92.19% and the repeat evaluator benchmark to 90.79%. See
+[the completed tuning record](../outputs/experiments/hmm_tuning_001/README.md)
+and `docs/CLIENT_API.md` for loading the selected configuration. The original
+review and untuned benchmark below remain as historical evidence.
+
 Integrated `person-3` commit `45edc6f`, preserving the teammate's branch history.
 The selected Random Forest is refitted on 78 eligible training trips with 200
 trees and seed 42. The fitted artifact is local; code and compact results are

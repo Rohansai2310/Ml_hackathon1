@@ -1,0 +1,32 @@
+{
+  "random_forest": {
+    "mean_fold_top1": 0.8726807087231485,
+    "pooled_top1": 0.8726807087231485,
+    "mean_trip_top1": 0.8835011803701391,
+    "correct": 16697,
+    "known": 19133,
+    "trips": 10,
+    "segments": null,
+    "seconds": 0.26910113400026603
+  },
+  "original_hmm": {
+    "mean_fold_top1": 0.8482203522709455,
+    "pooled_top1": 0.8482203522709455,
+    "mean_trip_top1": 0.8641175552355482,
+    "correct": 16229,
+    "known": 19133,
+    "trips": 10,
+    "segments": 65,
+    "seconds": 12.14747400899978
+  },
+  "selected_hmm": {
+    "mean_fold_top1": 0.9219150159410443,
+    "pooled_top1": 0.9219150159410443,
+    "mean_trip_top1": 0.9259960212970906,
+    "correct": 17639,
+    "known": 19133,
+    "trips": 10,
+    "segments": 14,
+    "seconds": 12.171837485000651
+  }
+}

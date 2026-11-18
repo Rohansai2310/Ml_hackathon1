@@ -28,6 +28,9 @@ def report(model_dir, evaluation_dir, archive):
     shutil.copy2(evaluation_dir / "run.json", archive / "evaluation_run.json")
     for filename in ["run.json", "selection.json", "configuration.json", "student_test_metrics.json"]:
         shutil.copy2(model_dir / filename, archive / f"model_{filename}")
+    frozen_decoder = evaluation_dir / "decoder_configuration.json"
+    if frozen_decoder.exists():
+        shutil.copy2(frozen_decoder, archive / "decoder_configuration.json")
     if with_hmm:
         route_rows = []
         for trip_id in table.trip_id:
@@ -113,11 +116,16 @@ def report(model_dir, evaluation_dir, archive):
         "Use a fresh output directory for each run. Obtain the original raw data and rebuild outputs/features first when working from a new clone. Training artifacts and evaluator data are deliberately not uploaded to Git.", "",
     ]
     if with_hmm:
+        delta = (metrics['hmm_top1_accuracy'] - metrics['top1_accuracy']) * 100
+        change = "improved" if delta >= 0 else "lowered"
         lines += ["## Measured outcome", "",
-            f"RF + HMM lowered pooled Top-1 by {(metrics['top1_accuracy'] - metrics['hmm_top1_accuracy'])*100:.2f} percentage points in this run. The decoder provides connected road segments, but this benchmark does not establish a pointwise accuracy improvement. All reconstructed segments passed directed-adjacency checks before evaluation. Decoder settings remain fixed; evaluator outcomes were not used to retune them.", ""]
+            f"RF + HMM {change} pooled Top-1 by {abs(delta):.2f} percentage points in this run. All reconstructed segments passed directed-adjacency checks before evaluation. Decoder settings remained fixed; evaluator outcomes were not used to retune them.", ""]
         lines += ["## HMM settings and limits", "",
-            "Directed metric shortest paths, partial-arc travel and GPS displacement are used in the transition potential. beta=50 m, max gap=30 s, max speed=60 m/s, and max transition distance=5,000 m were fixed before evaluator references were read. Empty/disconnected/time-gap segments are explicit; intermediate road arcs are reconstructed. These settings have not undergone decoder parameter optimization.", "",
+            "Directed metric shortest paths, partial-arc travel and GPS displacement are used in the transition potential. Empty/disconnected/time-gap segments are explicit; intermediate road arcs are reconstructed. Recorded decoder parameters:", "",
+            "```json", json.dumps(manifest['decoder'], indent=2), "```", "",
             "HMM Top-1 measures decoded per-observation choices against the same valid derived references as the classifier baseline. It does not establish an independently verified route-level accuracy score.", ""]
+        if frozen_decoder.exists():
+            lines += ["The supplied decoder configuration records training-only selection and is bound to the frozen model hash. This evaluator set was already examined; the result is a repeat development benchmark, not a fresh untouched final estimate.", ""]
     (archive / "README.md").write_text("\n".join(lines))
     print(archive / "README.md")
 

@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "health": {
+    "status": "healthy",
+    "model_loaded": true,
+    "decoder_configured": true
+  },
+  "trip_id": "00000023",
+  "gps_points": 458,
+  "matches_selected_benchmark": true,
+  "port": 8077
+}

@@ -1,5 +1,11 @@
 # Decoder tuning alongside client development
 
+Completed run: training-selected HMM reached **91.47% mean-fold training OOF**,
+**92.19% student-test**, and **90.79% on the repeat evaluator benchmark**.
+The original HMM scored 75.41% on that evaluator set. See the
+[trial records, selected configuration and results](../outputs/experiments/hmm_tuning_001/README.md).
+The evaluator set was already examined and did not rank these configurations.
+
 The Random Forest is reused without fitting again. `pathsnap.tune_hmm` reads its
 original training out-of-fold candidate predictions, checks feature-file hashes
 and fold alignment, then tunes decoder settings without opening evaluator data.
