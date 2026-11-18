@@ -4,6 +4,11 @@ Random Forest was reused without retraining. Evaluator data was not used to scre
 
 ## Measured comparison
 
+For presentations, use the [before-and-after accuracy graph](before_after_accuracy.png)
+([SVG version](before_after_accuracy.svg)). It compares the original and selected
+HMM on student testing and the repeat evaluator benchmark, with the same frozen
+Random Forest. Regenerate it using `python scripts/plot_before_after_accuracy.py`.
+
 | Pipeline | Training OOF mean-fold Top-1 | Student-test pooled Top-1 |
 |---|---:|---:|
 | Random Forest | 85.63% | 87.27% |
