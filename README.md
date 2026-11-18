@@ -1,7 +1,7 @@
 # PathSnap - GPS map-matching (data, candidates & features stage)
 
 Noisy GPS points -> road-network arcs. Pipeline: **raw files -> candidate arcs per GPS point -> features -> classifier -> HMM/Viterbi -> route -> API/UI**.
-This folder is the **first stage** (dataset exploration, preprocessing, candidate generation, feature engineering). Later stages plug into the tables it produces.
+This repository includes preprocessing, candidate generation, feature engineering and classifier training. HMM/Viterbi is the next implementation stage. Start with [the HMM/Viterbi handoff](docs/HMM_VITERBI_HANDOFF.md).
 
 ## 1. Where to extract the dataset
 Extract `Student_folder.zip` so the repo looks like this (the zip contains a folder called `Student folder` - move its two sub-folders):
@@ -70,3 +70,49 @@ make_trip_map(trip_id, "student_test", predicted_arcs=[...arc ids in order...])
 
 ## 6. Code map
 `data_io.py` read files (leakage-safe `with_route=False`) - `geo.py` UTM projection, point-to-segment, bearings - `network.py` projected trip geometry - `candidates.py` radius query - `labels.py` point->reference-arc alignment - `features.py` the 22 features - `build.py` parquet + folds - `eda.py`/`docgen.py` exploration - `maps.py` Folium - `cli.py` commands - `config.py` every constant.
+
+## 7. Person 2: train and compare five models
+
+The training stage adds Logistic Regression, Gaussian Naive Bayes, Decision Tree,
+Random Forest and AdaBoost with shallow trees. It consumes the existing Parquet
+files directly, preserving their five trip folds and the two documented excluded
+training trips. It fits imputation, and scaling where required, inside each fold.
+
+Run from the repository root after installing dependencies and building features:
+
+```bash
+PYTHONPATH=src python -m pathsnap.train \
+  --feature-dir outputs/features \
+  --output outputs/training/run_001 \
+  --trials 30 --jobs 2
+```
+
+If you installed the package with `pip install -e .`, `PYTHONPATH=src` is optional.
+Use a fresh output directory for every run; incomplete runs retain diagnostic
+files but are not automatically resumed. The full dataset and 30 tuning trials
+can take substantially longer than feature generation.
+
+The comparison uses observation-level Top-1 accuracy for model selection, with
+binary candidate log loss and scoring time as tie breakers. Thirty Optuna TPE
+trials tune the best baseline using the same folds. Student-testing results are
+generated after selection and tuning. If tuning worsens the CV ranking, the
+baseline remains the final artifact, while both are retained for comparison.
+
+`outputs/training/run_001/` contains configurations, environment versions,
+input checksums, fold assignments, CV metrics/predictions, Optuna SQLite/CSV
+history, model pipelines, student-testing predictions and comparison plots.
+`selection.json` identifies the final model. Training outputs are ignored by
+Git; publish selected measured results and artifacts deliberately when preparing
+the submission.
+
+Read [the training and review notes](docs/training.md) for metric definitions,
+label limitations, inference integration and verification commands.
+
+AdaBoost can run separately using [the Kaggle notebook](notebooks/adaboost_kaggle.ipynb).
+See [Kaggle handoff instructions](docs/kaggle.md) for the upload bundle and how to
+import results before resuming final selection and tuning.
+
+For a viva or demonstration, open the [four-model walkthrough](notebooks/four_models_walkthrough.ipynb).
+It shows real data, the training implementation, configurations, fold results and
+original logs. See [demonstration instructions](docs/four_model_demo.md) for an
+optional live rerun.

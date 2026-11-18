@@ -1,7 +1,7 @@
 numpy
 pandas
 scipy
-scikit-learn
+scikit-learn>=1.6,<2
 matplotlib
 shapely>=2.0
 pyproj
@@ -11,6 +11,8 @@ tqdm
 # later stages (Persons 2-4)
 lightgbm
 optuna
+joblib
+pytest
 fastapi
 uvicorn
 requests

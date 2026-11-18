@@ -1,0 +1,58 @@
+WARNING: The directory '/home/rohan-sai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Cross-validating logistic_regression
+  Reusing saved logistic_regression CV results
+Cross-validating gaussian_nb
+  Reusing saved gaussian_nb CV results
+Cross-validating decision_tree
+  Reusing saved decision_tree CV results
+Cross-validating random_forest
+  Reusing saved random_forest CV results
+Cross-validating adaboost
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/rohan-sai/Desktop/ML_hackathon/Ml_hackathon1/src/pathsnap/train.py", line 318, in <module>
+    main()
+    ~~~~^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/Ml_hackathon1/src/pathsnap/train.py", line 312, in main
+    run(parser().parse_args())
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/Ml_hackathon1/src/pathsnap/train.py", line 215, in run
+    summary, fold_results, scores = cross_validate(name, train, folds, args.seed, args.jobs)
+                                    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/Ml_hackathon1/src/pathsnap/train.py", line 89, in cross_validate
+    model.fit(fit[train.features], fit.label.astype(int))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/pipeline.py", line 645, in fit
+    self._final_estimator.fit(Xt, y, **last_step_params["fit"])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/ensemble/_weight_boosting.py", line 167, in fit
+    sample_weight, estimator_weight, estimator_error = self._boost(
+                                                       ~~~~~~~~~~~^
+        iboost, X, y, sample_weight, random_state
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/ensemble/_weight_boosting.py", line 526, in _boost
+    estimator.fit(X, y, sample_weight=sample_weight)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/tree/_classes.py", line 1015, in fit
+    super()._fit(
+    ~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<2 lines>...
+        check_input=check_input,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/tree/_classes.py", line 467, in _fit
+    builder.build(self.tree_, X, y, sample_weight, missing_values_in_feature_mask)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

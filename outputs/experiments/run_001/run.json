@@ -1,0 +1,56 @@
+{
+  "feature_dir": "outputs/features",
+  "train": null,
+  "student_test": null,
+  "train_inventory": null,
+  "student_test_inventory": null,
+  "features": {
+    "dist_m": "GPS-to-candidate distance (m)",
+    "frac_along": "Clamped fractional position along arc (0\u20131)",
+    "arc_len_m": "Arc length (m)",
+    "dist_rank": "Zero-based candidate distance rank",
+    "dist_rel_min": "Distance above nearest candidate (m)",
+    "n_cand": "Candidate count for observation",
+    "heading_diff_deg": "Travel-to-arc heading difference (degrees)",
+    "cos_heading": "Cosine of heading difference",
+    "speed_mps": "Local vehicle speed (m/s)",
+    "dt_prev": "Previous valid sample gap (s)",
+    "dt_next": "Next valid sample gap (s)",
+    "win_mean_dist": "Neighbour mean distance to candidate (m)",
+    "win_max_dist": "Neighbour maximum distance to candidate (m)",
+    "win_min_dist": "Neighbour minimum distance to candidate (m)",
+    "win_hit_frac": "Fraction of valid neighbours within half candidate radius",
+    "out_deg_to": "Out-degree of arc destination",
+    "in_deg_from": "In-degree of arc source",
+    "has_reverse": "Reverse arc exists (0/1)",
+    "to_node_dist_m": "Distance to destination node (m)",
+    "from_node_dist_m": "Distance to source node (m)",
+    "along_advance_m": "Signed neighbouring progress along arc (m)",
+    "speed_dist_resid": "Absolute along-arc progress minus neighbouring displacement (m)"
+  },
+  "output": "outputs/training/run_001",
+  "seed": 42,
+  "jobs": 2,
+  "trials": 30,
+  "allow_partial_data": false,
+  "input_sha256": {
+    "schema": "ee7da1823ff978b496e0a3679b508b7c864e2f9940de62a21c0e1fc3b65c3bb6",
+    "train_candidates": "cc8075181a0f23550104f2eb6141e7787416dbf0d7b42f93973b56647b57996c",
+    "train_points": "15c5da909b08c7986d0bbd304f94d30ca21dc002b1c2689655db3d53f12f1326",
+    "student_test_candidates": "fba8530f8979144424cf61c46e20c203f72a30ff71bc4ef11ae47184d5454597",
+    "student_test_points": "fa04a1496bcd2da100f57786280d070fb359897e236b275ef5218ec37bc2eb10"
+  },
+  "python": "3.14.4",
+  "input_files": {
+    "schema": "outputs/features/feature_schema.json",
+    "train_candidates": "outputs/features/train_candidates.parquet",
+    "train_points": "outputs/features/train_points.parquet",
+    "student_test_candidates": "outputs/features/student_test_candidates.parquet",
+    "student_test_points": "outputs/features/student_test_points.parquet"
+  },
+  "excluded_training_trips": [
+    "00000033",
+    "00000054"
+  ],
+  "selection_metric": "Mean fold observation Top-1 accuracy, counting candidate misses as errors"
+}

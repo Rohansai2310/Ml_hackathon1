@@ -1,0 +1,103 @@
+WARNING: The directory '/home/rohan-sai/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Cross-validating logistic_regression
+  logistic_regression fold 0: Top-1=0.8552, fit=16.0s
+  logistic_regression fold 1: Top-1=0.8355, fit=15.5s
+  logistic_regression fold 2: Top-1=0.8730, fit=15.8s
+  logistic_regression fold 3: Top-1=0.8972, fit=15.8s
+  logistic_regression fold 4: Top-1=0.7997, fit=15.0s
+Cross-validating gaussian_nb
+  gaussian_nb fold 0: Top-1=0.8091, fit=6.0s
+  gaussian_nb fold 1: Top-1=0.7470, fit=6.8s
+  gaussian_nb fold 2: Top-1=0.8425, fit=6.1s
+  gaussian_nb fold 3: Top-1=0.8497, fit=6.8s
+  gaussian_nb fold 4: Top-1=0.7669, fit=6.4s
+Cross-validating decision_tree
+  decision_tree fold 0: Top-1=0.7414, fit=56.0s
+  decision_tree fold 1: Top-1=0.7346, fit=53.8s
+  decision_tree fold 2: Top-1=0.7782, fit=53.3s
+  decision_tree fold 3: Top-1=0.8185, fit=48.8s
+  decision_tree fold 4: Top-1=0.6996, fit=45.3s
+Cross-validating random_forest
+  random_forest fold 0: Top-1=0.8510, fit=620.4s
+  random_forest fold 1: Top-1=0.8337, fit=641.7s
+  random_forest fold 2: Top-1=0.8848, fit=604.9s
+  random_forest fold 3: Top-1=0.9042, fit=557.7s
+  random_forest fold 4: Top-1=0.8077, fit=561.8s
+Cross-validating adaboost
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/rohan-sai/Desktop/ML_hackathon/Ml_hackathon1/src/pathsnap/train.py", line 275, in <module>
+    ]:
+  File "/home/rohan-sai/Desktop/ML_hackathon/Ml_hackathon1/src/pathsnap/train.py", line 269, in main
+    "final_model": final_name, "final_artifact": f"{final_name}/pipeline.joblib"})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/Ml_hackathon1/src/pathsnap/train.py", line 195, in run
+    else:
+
+  File "/home/rohan-sai/Desktop/ML_hackathon/Ml_hackathon1/src/pathsnap/train.py", line 89, in cross_validate
+    model.fit(fit[train.features], fit.label.astype(int))
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/pipeline.py", line 632, in fit
+    Xt = self._fit(
+        X, y, routed_params, raw_params=params, callback_ctx=callback_ctx
+    )
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/pipeline.py", line 561, in _fit
+    X, fitted_transformer = fit_transform_one_cached(
+                            ~~~~~~~~~~~~~~~~~~~~~~~~^
+        cloned_transformer,
+        ^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+        callback_ctx=subcontext,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/joblib/memory.py", line 331, in __call__
+    return self.func(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/pipeline.py", line 1593, in _fit_transform_one_with_callbacks
+    Xt, transformer = _fit_transform_one(
+                      ~~~~~~~~~~~~~~~~~~^
+        transformer, X, y, weight, message_clsname, message, params
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/pipeline.py", line 1566, in _fit_transform_one
+    res = transformer.fit_transform(X, y, **params.get("fit_transform", {}))
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/utils/_set_output.py", line 327, in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/base.py", line 972, in fit_transform
+    return self.fit(X, y, **fit_params).transform(X)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/impute/_base.py", line 467, in fit
+    self.statistics_ = self._dense_fit(
+                       ~~~~~~~~~~~~~~~^
+        X, self.strategy, self.missing_values, fill_value
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/sklearn/impute/_base.py", line 547, in _dense_fit
+    median_masked = np.ma.median(masked_X, axis=0)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/numpy/ma/extras.py", line 752, in median
+    return _ureduce(a, func=_median, keepdims=keepdims, axis=axis, out=out,
+                    overwrite_input=overwrite_input)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/numpy/lib/_function_base_impl.py", line 3893, in _ureduce
+    r = func(a, **kwargs)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/numpy/ma/extras.py", line 771, in _median
+    asorted = sort(a, axis=axis, fill_value=fill_value)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/numpy/ma/core.py", line 7287, in sort
+    a.sort(axis=axis, kind=kind, order=order, endwith=endwith,
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           fill_value=fill_value, stable=stable, descending=descending)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/numpy/ma/core.py", line 5889, in sort
+    sidx = self.argsort(axis=axis, kind=kind, order=order,
+                        fill_value=fill_value, endwith=endwith)
+  File "/home/rohan-sai/Desktop/ML_hackathon/.venv/lib/python3.14/site-packages/numpy/ma/core.py", line 5711, in argsort
+    return filled.argsort(axis=axis, kind=kind, order=order)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
