@@ -123,7 +123,7 @@ function switchView(folium) {
   $("road-view").setAttribute("aria-pressed",String(!folium));
   $("folium-view").setAttribute("aria-pressed",String(folium));
   if (folium && !$("folium-map").hasAttribute("srcdoc")) $("folium-map").srcdoc=result.map_html;
-  $("map-hint").textContent=folium?"Folium layers + street tiles need internet":"Scroll to zoom · drag to pan";
+  $("map-hint").textContent=folium?"Supplied road network · use the map layer control":"Scroll to zoom · drag to pan";
 }
 
 async function match() {

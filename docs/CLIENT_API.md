@@ -96,8 +96,9 @@ Open **http://127.0.0.1:8501** in Laptop 2's browser. The interface:
 5. Lets you toggle layers, pan/zoom, download result JSON and save a Folium map.
 
 The plain road view uses no external downloads and works without internet.
-The Folium view additionally needs internet access for its JavaScript libraries
-and street tiles. Use Folium's own layer control in that view. The left-hand
+The Folium view additionally needs internet access for its JavaScript libraries.
+It uses the supplied trip road network as its background and requests no external
+street tiles, avoiding tile-provider access blocks. Use Folium's own layer control in that view. The left-hand
 layer checkboxes control the plain road view.
 
 The small client-side proxy forwards only `/health`, `/trips`, `/match` and

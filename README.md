@@ -27,7 +27,7 @@ python scripts/run_client.py --server http://192.168.1.10:8000
 
 The UI laptop needs only Python's standard library and a browser. It displays
 all ten server trips, route layers, RF/HMM pointwise accuracy, segment boundaries
-and downloads. A built-in road view works offline; Folium street tiles need internet.
+and downloads. A built-in road view works offline; Folium JavaScript needs internet.
 [Training-only HMM tuning](docs/hmm_tuning.md) runs separately and can update the
 decoder without changing the client request/response contract.
 

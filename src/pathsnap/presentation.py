@@ -27,14 +27,16 @@ def connected_reference(trip):
 def folium_html(geometry, trip_id):
     gps = geometry['gps']
     latlon = [[lat, lon] for lon, lat in gps]
-    m = folium.Map(location=latlon[0], zoom_start=15, tiles='OpenStreetMap', control_scale=True)
+    # Use the supplied trip network, not a third-party tile server. Sandboxed
+    # embedded maps may omit the Referer required by public tile providers.
+    m = folium.Map(location=latlon[0], zoom_start=15, tiles=None, control_scale=True)
     def add_lines(name, lines, color, weight, show=True):
         layer = folium.FeatureGroup(name=name, show=show)
         for line in lines:
             folium.PolyLine([[lat, lon] for lon, lat in line], color=color,
                             weight=weight, opacity=.8).add_to(layer)
         layer.add_to(m)
-    add_lines('Road network (grey)', geometry['roads'], '#8795a5', 2, False)
+    add_lines('Road network (grey)', geometry['roads'], '#8795a5', 2, True)
     add_lines('Raw GPS (blue)', [gps], '#2563eb', 2)
     points = folium.FeatureGroup(name='GPS observations (blue dots)')
     for i in range(0, len(gps), max(1, len(gps)//2000)):
@@ -53,7 +55,8 @@ def folium_html(geometry, trip_id):
               f'padding:12px;border:1px solid #ddd;font:13px sans-serif">Trip {trip_id}<br>'
               '<span style="color:#2563eb">● GPS</span> · '
               '<span style="color:#15803d">━ Reference</span> · '
-              '<span style="color:#e56720">━ RF + HMM</span></div>')
+              '<span style="color:#e56720">━ RF + HMM</span>'
+              '<br><small>Background: supplied trip road network</small></div>')
     m.get_root().html.add_child(folium.Element(legend))
     return m.get_root().render()
 

@@ -71,6 +71,9 @@ def test_ui_lists_server_trips_and_evaluates_only_after_decoding(server_data, mo
     assert payload['evaluation']['unresolved_points'] == 1
     assert payload['geometry']['matched_segments'] == [[[[0.,51.],[.001,51.]],[[.001,51.],[.002,51.]]]]
     assert 'RF + HMM (orange)' in payload['map_html']
+    assert 'tile.openstreetmap.org' not in payload['map_html']
+    assert 'L.tileLayer(' not in payload['map_html']
+    assert 'Background: supplied trip road network' in payload['map_html']
     assert payload['model']['sha256'] == 'synthetic-model'
 
 
