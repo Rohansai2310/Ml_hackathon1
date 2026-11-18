@@ -1,0 +1,10 @@
+{
+  "top1_accuracy": 0.8030347557541135,
+  "top1_accuracy_reference_present": 0.8030710472366724,
+  "candidate_miss_rate": 4.4567012409570484e-05,
+  "macro_f1": 0.765593468455058,
+  "log_loss": 0.8293249017404921,
+  "training_seconds": 6.409394126599727,
+  "inference_seconds": 0.18101385700010725,
+  "top1_accuracy_std": 0.04052568698441816
+}

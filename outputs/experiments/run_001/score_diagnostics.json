@@ -1,0 +1,12 @@
+{
+  "decision_tree": {
+    "observations_with_candidates": 182545,
+    "fraction_with_tied_top_score": 0.2128790161330083,
+    "fraction_candidate_scores_exactly_zero_or_one": 1.0
+  },
+  "random_forest": {
+    "observations_with_candidates": 182545,
+    "fraction_with_tied_top_score": 0.0017146457037990632,
+    "fraction_candidate_scores_exactly_zero_or_one": 0.76879900305755
+  }
+}

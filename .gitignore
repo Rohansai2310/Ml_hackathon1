@@ -1,4 +1,5 @@
 data/raw/
+/data/raw
 __pycache__/
 *.egg-info/
 outputs/eda/_*.parquet
@@ -7,3 +8,16 @@ outputs/features/*.parquet
 
 .venv/
 .qodo/
+outputs/training/
+outputs/kaggle/
+
+# Local environments, credentials, editor state and generated caches
+.env
+.env.*
+!.env.example
+.aws/
+.codex/
+.agents/
+.vscode/
+.ipynb_checkpoints/
+*.pyc
