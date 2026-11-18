@@ -53,6 +53,10 @@ def fixture_run(tmp_path):
 def test_evaluation_freezes_all_predictions_before_reading_references(tmp_path, monkeypatch):
     model, root, features = fixture_run(tmp_path)
     output = tmp_path / "result"
+    decoder_config = tmp_path / "decoder.json"
+    write_json(decoder_config, {"model_sha256": file_hash(model / "pipeline.joblib"),
+        "evaluator_used_for_selection": False,
+        "decoder_parameters": {"beta": 100.0, "same_arc_jitter_m": 5.0, "emission_mode": "log_odds"}})
     original_load = data_io._load
     reads = []
 
@@ -71,7 +75,7 @@ def test_evaluation_freezes_all_predictions_before_reading_references(tmp_path, 
 
     monkeypatch.setattr(data_io, "_load", guard)
     before = file_hash(model / "pipeline.joblib")
-    metrics = run(model, root, output, feature_dir=features, with_hmm=True)
+    metrics = run(model, root, output, feature_dir=features, with_hmm=True, decoder_config=decoder_config)
     assert len(reads) == 2
     assert metrics["trips"] == 2 and metrics["observations"] == 8
     assert metrics["known_observations"] == 6
@@ -82,6 +86,7 @@ def test_evaluation_freezes_all_predictions_before_reading_references(tmp_path, 
     assert metrics["hmm_top1_accuracy"] == pytest.approx(metrics["hmm_correct_known_observations"] / 6)
     assert file_hash(model / "pipeline.joblib") == before
     assert json.loads((output / "run.json").read_text())["status"] == "complete"
+    assert json.loads((output / "run.json").read_text())["decoder"]["same_arc_jitter_m"] == 5.0
     with pytest.raises(ValueError, match="empty"):
         run(model, root, output, feature_dir=features)
 

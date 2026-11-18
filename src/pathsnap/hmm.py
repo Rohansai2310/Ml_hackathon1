@@ -8,9 +8,32 @@ from __future__ import annotations
 from collections import OrderedDict
 from dataclasses import dataclass
 import heapq
+import json
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+
+def load_decoder_parameters(path, *, model_sha256):
+    """Load training-selected settings bound to the same frozen classifier."""
+    record = json.loads(Path(path).read_text())
+    if record.get("model_sha256") != model_sha256:
+        raise ValueError("Decoder configuration belongs to a different model")
+    if record.get("evaluator_used_for_selection") is not False:
+        raise ValueError("Decoder configuration must record evaluator-free selection")
+    parameters = record["decoder_parameters"]
+    allowed = {"beta", "same_arc_jitter_m", "emission_mode", "max_gap_s", "max_speed_mps", "max_transition_distance_m"}
+    if not parameters or set(parameters) - allowed:
+        raise ValueError("Invalid decoder parameter names")
+    for name, value in parameters.items():
+        if name == "emission_mode":
+            if value not in {"probability", "log_odds"}:
+                raise ValueError("Invalid emission mode")
+        elif (not isinstance(value, (float, int)) or isinstance(value, bool)
+              or not np.isfinite(value) or value < 0 or (name != "same_arc_jitter_m" and value == 0)):
+            raise ValueError(f"Invalid decoder parameter: {name}")
+    return parameters.copy()
 
 
 @dataclass
@@ -58,10 +81,14 @@ class RoadGraph:
             self.cache.popitem(last=False)
         return distances, parents
 
-    def transition(self, previous_arc, previous_frac, current_arc, current_frac, limit):
+    def transition(self, previous_arc, previous_frac, current_arc, current_frac, limit,
+                   *, same_arc_jitter_m=0.0):
         """Return a metric distance and intermediate arc IDs, including partial arcs."""
-        if previous_arc == current_arc and current_frac >= previous_frac:
-            distance = (current_frac - previous_frac) * self.lengths[previous_arc]
+        progress = (current_frac - previous_frac) * self.lengths[previous_arc]
+        if previous_arc == current_arc and progress >= -same_arc_jitter_m:
+            # Small backwards projection noise is a stationary observation, not
+            # permission to traverse an arc in the reverse direction.
+            distance = max(0.0, progress)
             return (distance, []) if distance <= limit else (np.inf, [])
         source = int(self.arcs[previous_arc, 1])
         target = int(self.arcs[current_arc, 0])
@@ -81,11 +108,11 @@ class RoadGraph:
 def viterbi_decode(candidates: pd.DataFrame, arcs, probabilities, *, arc_lengths,
                    gps_xy, timestamps, beta=50.0, max_gap_s=30.0,
                    max_speed_mps=60.0, max_transition_distance_m=5000.0,
-                   return_details=False):
+                   same_arc_jitter_m=0.0, emission_mode="probability", return_details=False):
     """Decode label-free candidate scores into observation matches and road segments.
 
     Transition log potential is -abs(network_metres - GPS_displacement_metres)/beta.
-    Same-arc backward progress requires a directed return path, never free motion.
+    Backward projection beyond the configured noise tolerance requires a return path.
     Default settings are fixed design choices, not tuned on evaluator results.
     Deterministic ties prefer the lower numeric arc ID after candidate sorting.
     """
@@ -99,6 +126,10 @@ def viterbi_decode(candidates: pd.DataFrame, arcs, probabilities, *, arc_lengths
     if not all(np.isfinite(value) and value > 0 for value in
                [beta, max_gap_s, max_speed_mps, max_transition_distance_m]):
         raise ValueError("Decoder scales, gap and transition limits must be positive and finite")
+    if not np.isfinite(same_arc_jitter_m) or same_arc_jitter_m < 0:
+        raise ValueError("Same-arc projection jitter must be finite and nonnegative")
+    if emission_mode not in {"probability", "log_odds"}:
+        raise ValueError("Unknown emission_mode")
     graph = RoadGraph(arcs, arc_lengths)
     probs = np.asarray(probabilities, dtype=float)
     if probs.shape != (len(candidates),) or not np.isfinite(probs).all() or ((probs < 0) | (probs > 1)).any():
@@ -116,6 +147,9 @@ def viterbi_decode(candidates: pd.DataFrame, arcs, probabilities, *, arc_lengths
     if data.duplicated(["point_idx", "arc_id"]).any():
         raise ValueError("Duplicate candidate arc for an observation")
     data["emission"] = np.log(np.clip(probs, 1e-12, 1.0))
+    if emission_mode == "log_odds":
+        clipped = np.clip(probs, 1e-12, 1 - 1e-12)
+        data["emission"] = np.log(clipped) - np.log1p(-clipped)
     groups = {int(i): group.sort_values("arc_id", kind="stable") for i, group in data.groupby("point_idx")}
     point_arcs = np.full(len(times), -1, dtype=int)
     segment_ids = np.full(len(times), -1, dtype=int)
@@ -174,9 +208,9 @@ def viterbi_decode(candidates: pd.DataFrame, arcs, probabilities, *, arc_lengths
             middle = np.array([reached.get(int(node), np.inf) for node in current_sources])
             distances[i] = ((1 - previous_frac[i]) * graph.lengths[previous_arc]
                             + middle + frac * graph.lengths[ids])
-            same_forward = (ids == previous_arc) & (frac >= previous_frac[i])
-            distances[i, same_forward] = ((frac[same_forward] - previous_frac[i])
-                                          * graph.lengths[previous_arc])
+            progress = (frac - previous_frac[i]) * graph.lengths[previous_arc]
+            same_hold = (ids == previous_arc) & (progress >= -same_arc_jitter_m)
+            distances[i, same_hold] = np.maximum(0.0, progress[same_hold])
         distances[distances > limit] = np.inf
         totals = scores[:, None] - np.abs(distances - displacement) / beta
         back = np.argmax(totals, axis=0)
@@ -199,10 +233,12 @@ def viterbi_decode(candidates: pd.DataFrame, arcs, probabilities, *, arc_lengths
             p, previous_arc, previous_frac = previous
             q, current_arc, current_frac = current
             distance, middle = graph.transition(previous_arc, previous_frac, current_arc,
-                                                 current_frac, limit_between(p, q))
+                                                 current_frac, limit_between(p, q),
+                                                 same_arc_jitter_m=same_arc_jitter_m)
             if not np.isfinite(distance):
                 raise RuntimeError("Decoded transition cannot be reconstructed")
-            if previous_arc == current_arc and current_frac >= previous_frac:
+            if (previous_arc == current_arc and
+                    (current_frac - previous_frac) * graph.lengths[previous_arc] >= -same_arc_jitter_m):
                 continue
             route.extend(middle)
             route.append(current_arc)

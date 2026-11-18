@@ -83,7 +83,7 @@ def pointwise_matches(inventory, predictions):
     }
 
 
-def run(model_dir, root, output, partition="evaluator_test", feature_dir=None, with_hmm=False):
+def run(model_dir, root, output, partition="evaluator_test", feature_dir=None, with_hmm=False, decoder_config=None):
     model_dir, root, output = Path(model_dir), Path(root), Path(output)
     if output.exists() and any(output.iterdir()):
         raise ValueError("Choose a new, empty evaluation output directory")
@@ -97,6 +97,12 @@ def run(model_dir, root, output, partition="evaluator_test", feature_dir=None, w
     model_hash = file_hash(artifact)
     if model_hash != metadata["model_sha256"]:
         raise ValueError("Model artifact hash differs from the frozen training record")
+    decoder_parameters = {}
+    if decoder_config:
+        if not with_hmm:
+            raise ValueError("Decoder configuration requires with_hmm")
+        from .hmm import load_decoder_parameters
+        decoder_parameters = load_decoder_parameters(decoder_config, model_sha256=model_hash)
     trips = data_io.list_trips(partition, root)
     if not trips:
         raise ValueError(f"No {partition} trips under {root}")
@@ -116,13 +122,19 @@ def run(model_dir, root, output, partition="evaluator_test", feature_dir=None, w
         "status": "predicting", "model": "random_forest", "model_sha256": model_hash,
         "model_dir": str(model_dir.resolve()), "partition": partition, "trip_ids": trips,
         "fit_or_tuning_on_evaluator": False,
-        "decoder": ({"name": "metric_hmm_viterbi", "beta_m": 50.0, "max_gap_s": 30.0,
-                     "max_speed_mps": 60.0, "max_transition_distance_m": 5000.0} if with_hmm else None),
+        "decoder": ({"name": "metric_hmm_viterbi", "beta": 50.0, "max_gap_s": 30.0,
+                     "max_speed_mps": 60.0, "max_transition_distance_m": 5000.0,
+                     "same_arc_jitter_m": 0.0, "emission_mode": "probability",
+                     **decoder_parameters} if with_hmm else None),
         "pointwise_reference": "Monotone route alignment, valid if distance <= 50 m",
         "reference_limitation": "Derived reference labels, not independently supplied pointwise truth",
         "input_sha256": {}, "prediction_sha256": {},
     }
     write_json(output / "run.json", manifest)
+    if decoder_config:
+        configuration_record = json.loads(Path(decoder_config).read_text())
+        write_json(output / "decoder_configuration.json", configuration_record)
+        manifest["decoder_configuration_sha256"] = file_hash(output / "decoder_configuration.json")
     model = joblib.load(artifact)
     prepared = []
     for trip_id in trips:
@@ -147,7 +159,8 @@ def run(model_dir, root, output, partition="evaluator_test", feature_dir=None, w
             from .hmm import viterbi_decode
             geom = build_geom(trip)
             decoded = viterbi_decode(candidates, trip.arcs, scores.probability,
-                arc_lengths=geom.arc_len, gps_xy=geom.P, timestamps=geom.t, return_details=True)
+                arc_lengths=geom.arc_len, gps_xy=geom.P, timestamps=geom.t, return_details=True,
+                **decoder_parameters)
             for segment in decoded.route_segments:
                 if any(trip.arcs[first, 1] != trip.arcs[second, 0]
                        for first, second in zip(segment, segment[1:])):
@@ -248,8 +261,10 @@ def main():
     parser.add_argument("--output", required=True)
     parser.add_argument("--feature-dir", default=str(config.FEATURE_DIR))
     parser.add_argument("--with-hmm", action="store_true")
+    parser.add_argument("--decoder-config")
     args = parser.parse_args()
-    run(args.model_dir, args.data_root, args.output, feature_dir=args.feature_dir, with_hmm=args.with_hmm)
+    run(args.model_dir, args.data_root, args.output, feature_dir=args.feature_dir, with_hmm=args.with_hmm,
+        decoder_config=args.decoder_config)
 
 
 if __name__ == "__main__":

@@ -105,3 +105,23 @@ def test_no_candidates_preserves_every_gps_point():
 def test_invalid_scores_and_fractions_fail(fraction,probability):
     with pytest.raises(ValueError):
         decode([(0,0,fraction)],[[0,1]],[10],[probability])
+
+
+def test_small_projection_jitter_is_a_hold_not_a_reverse_road_path():
+    candidates=pd.DataFrame({'point_idx':[0,1],'arc_id':[0,0],'frac_along':[.5,.48]})
+    kwargs=dict(arc_lengths=[100],gps_xy=[[50,0],[48,0]],timestamps=[0,1],return_details=True)
+    strict=viterbi_decode(candidates,[[0,1]],[.9,.9],**kwargs)
+    relaxed=viterbi_decode(candidates,[[0,1]],[.9,.9],same_arc_jitter_m=5,**kwargs)
+    assert strict.segment_ids == [0,1]
+    assert relaxed.segment_ids == [0,0]
+    assert relaxed.route_segments == [[0]]
+    candidates.loc[1,'frac_along']=.2
+    too_far=viterbi_decode(candidates,[[0,1]],[.9,.9],same_arc_jitter_m=5,**kwargs)
+    assert too_far.segment_ids == [0,1]
+
+
+def test_log_odds_emissions_remain_finite_at_probability_limits():
+    candidates=pd.DataFrame({'point_idx':[0,0,1,1],'arc_id':[0,1,0,1],'frac_along':[.2,.2,.3,.3]})
+    result=viterbi_decode(candidates,[[0,1],[10,11]],[1.,0.,1.,0.],arc_lengths=[100,100],
+        gps_xy=[[20,0],[30,0]],timestamps=[0,1],emission_mode='log_odds')
+    assert result == [0,0]

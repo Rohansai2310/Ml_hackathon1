@@ -13,7 +13,7 @@ from . import config, data_io as io
 from .features import build_candidate_table
 from .build import F32
 from .network import build_geom
-from .hmm import viterbi_decode
+from .hmm import viterbi_decode, load_decoder_parameters
 
 app = FastAPI(
     title="PathSnap API",
@@ -23,6 +23,8 @@ app = FastAPI(
 
 # Person 2's trained classifier can be registered here.
 _model = None
+_model_sha256 = None
+_decoder_parameters = {}
 
 
 def set_model(model):
@@ -33,6 +35,7 @@ def set_model(model):
 
 def load_model(directory):
     """Load a trusted local artifact only when its frozen hash/configuration match."""
+    global _model_sha256
     import joblib
     from .train import file_hash
     directory = Path(directory)
@@ -43,10 +46,15 @@ def load_model(directory):
             or file_hash(artifact) != metadata["model_sha256"]):
         raise ValueError("Model status, features or artifact hash is invalid")
     set_model(joblib.load(artifact))
+    _model_sha256 = metadata["model_sha256"]
 
 
 if os.environ.get("PATHSNAP_MODEL_DIR"):
     load_model(os.environ["PATHSNAP_MODEL_DIR"])
+if os.environ.get("PATHSNAP_DECODER_CONFIG"):
+    if _model_sha256 is None:
+        raise ValueError("PATHSNAP_DECODER_CONFIG requires PATHSNAP_MODEL_DIR")
+    _decoder_parameters = load_decoder_parameters(os.environ["PATHSNAP_DECODER_CONFIG"], model_sha256=_model_sha256)
 
 
 class MatchRequest(BaseModel):
@@ -81,6 +89,7 @@ def health():
     return {
         "status": "healthy",
         "model_loaded": _model is not None,
+        "decoder_configured": bool(_decoder_parameters),
     }
 
 
@@ -143,6 +152,7 @@ def match_trip(request: MatchRequest):
             gps_xy=geom.P,
             timestamps=geom.t,
             return_details=True,
+            **_decoder_parameters,
         )
 
         return MatchResponse(

@@ -5,6 +5,10 @@ This repository includes preprocessing, candidate generation, feature engineerin
 classifier training, metric HMM/Viterbi decoding and a FastAPI inference backend.
 See [the HMM review and usage guide](docs/hmm_review.md) for integration details.
 
+Start two-client integration with [the shared backend API contract](docs/CLIENT_API.md).
+[Training-only HMM tuning](docs/hmm_tuning.md) runs separately and can update the
+decoder without changing the client request/response contract.
+
 Random Forest is now the selected classifier. See [selected-model fitting and
 evaluator-test evaluation](docs/random_forest_evaluation.md) for the fixed-model
 workflow. The earlier project PDF and four-model archive describe the preceding
