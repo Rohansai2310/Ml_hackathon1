@@ -123,6 +123,47 @@ available for the demonstrated two-process/two-laptop setup.
 
 ## FastAPI contract
 
+### Access from different internet connections
+
+A private Wi-Fi address such as `10.x.x.x` or `192.168.x.x` cannot normally be
+reached from another internet connection. Use a shared VPN or an explicitly
+approved public tunnel; changing the browser URL alone cannot make it reachable.
+
+An optional access-code gateway is implemented in `scripts/share_server.py`.
+It listens on loopback, requires a per-run code, uses an HTTPS-only session cookie,
+accepts only evaluator trip requests and rejects client-supplied filesystem paths.
+It does not expose the full FastAPI service directly. Run it locally with:
+
+```bash
+python scripts/share_server.py --state-file /tmp/pathsnap-share-state.json
+```
+
+The state file contains the access code and is created with owner-only permissions.
+Never commit it. To share over the internet, a tunnel must target this gateway on
+port 8510, not the unrestricted API on 8077. Sharing through an external provider
+requires approval for the selected service and the route/results data it carries.
+No tunnel is started by the server, client or gateway launcher itself.
+
+After approval, install the official `cloudflared` binary and start a second
+terminal with:
+
+```bash
+cloudflared tunnel --no-autoupdate --protocol http2 --url http://127.0.0.1:8510
+```
+
+Open the generated **HTTPS address directly in the other laptop's browser**,
+even when it uses another internet connection. Enter the code from the private
+state file. The browser loads the UI and uses the protected proxy over that same
+HTTPS origin; no client launcher or model installation is required on that laptop.
+Do not point the standalone client proxy at this login-protected URL; it cannot
+perform the browser sign-in flow. Do not paste access codes into Git or URLs.
+
+[Cloudflare Quick Tunnels](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)
+provide a temporary HTTPS hostname while the tunnel process stays running; the
+hostname changes on a new tunnel. They are for development demonstrations, not a
+permanent deployment. Keep the laptop awake and both server/gateway terminals
+running for an approved demo, and stop the gateway/tunnel to revoke access.
+
 `GET /health` reports model/configuration loading. `GET /trips` returns
 `{"partition":"evaluator_test","trips":["00000015", "..."],"count":10}` using
 actual server folders. `GET /docs` provides OpenAPI documentation.

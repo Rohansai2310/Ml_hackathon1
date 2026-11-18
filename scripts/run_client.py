@@ -18,6 +18,10 @@ WEB = Path(__file__).resolve().parents[1]/'src/pathsnap/web'
 class ClientHandler(SimpleHTTPRequestHandler):
     server_url = ''
 
+    def prepare_payload(self, body):
+        """Optional policy hook used by the internet-sharing gateway."""
+        return body
+
     def send_body(self, body, status=200, content_type='application/json'):
         self.send_response(status)
         self.send_header('Content-Type', content_type)
@@ -43,6 +47,11 @@ class ClientHandler(SimpleHTTPRequestHandler):
                 self.send_error(413)
                 return
             body = self.rfile.read(length)
+            try:
+                body = self.prepare_payload(body)
+            except ValueError as exc:
+                self.send_body(json.dumps({'detail': str(exc)}).encode(), 400)
+                return
         request = urllib.request.Request(self.server_url+suffix, data=body,
             headers={'Content-Type': 'application/json'}, method=self.command)
         try:

@@ -12,6 +12,11 @@ requests to FastAPI. No model or dataset is required on the UI laptop.
   against the frozen selected-decoder prediction files.
 - `tests.log`: application test suite, including synthetic no-reference leakage
   checks and real local HTTP proxy/error propagation checks.
+- `public_tunnel_check.json`: approved Cloudflare HTTPS demo checked from the
+  external hostname, rejecting unauthenticated API requests, accepting access-code
+  login, listing ten trips and returning the actual frozen prediction for 00000023.
+  The temporary hostname is an observed test artifact, not a permanent service URL.
+  The access code and session token are not in this repository.
 
 A per-trip score such as 93.67% for 00000023 is different from the pooled evaluator
 benchmark of 90.79%. No model fitting or hyperparameter selection took place.

@@ -1,0 +1,12 @@
+{
+  "public_https_url": "https://philips-organic-suites-alike.trycloudflare.com",
+  "unauthenticated_api_status": 401,
+  "authenticated_login": true,
+  "trip_count": 10,
+  "real_trip": "00000023",
+  "gps_points": 458,
+  "hmm_correct": 429,
+  "model_sha256": "726b503c4ec431232411dcc94f2b443156d6ea43f2ee7bf0fcb8e19a29dc2399",
+  "status": "passed",
+  "credential_saved_in_repository": false
+}
