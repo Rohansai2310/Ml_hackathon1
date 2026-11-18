@@ -1,0 +1,12 @@
+{
+  "top1_accuracy": 0.8726807087231485,
+  "top1_accuracy_reference_present": 0.8726807087231485,
+  "candidate_miss_rate": 0.0,
+  "macro_f1": 0.9280779205740577,
+  "log_loss": 0.042278631864073435,
+  "known_observations": 19133,
+  "unresolved_observations": 27,
+  "reference_present_observations": 19133,
+  "zero_candidate_observations": 0,
+  "inference_seconds": 3.723454877000222
+}

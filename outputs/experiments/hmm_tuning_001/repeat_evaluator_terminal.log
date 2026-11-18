@@ -1,0 +1,43 @@
+Predicted 00000015: 6,854 points, 86,066 candidates, 4.8s
+Predicted 00000017: 1,346 points, 38,017 candidates, 2.1s
+Predicted 00000023: 458 points, 6,270 candidates, 0.5s
+Predicted 00000030: 654 points, 19,979 candidates, 1.0s
+Predicted 00000049: 2,642 points, 19,969 candidates, 1.4s
+Predicted 00000059: 1,031 points, 26,237 candidates, 1.4s
+Predicted 00000067: 916 points, 10,217 candidates, 0.7s
+Predicted 00000073: 1,144 points, 17,644 candidates, 1.1s
+Predicted 00000087: 1,399 points, 20,581 candidates, 1.2s
+Predicted 00000094: 3,230 points, 57,591 candidates, 3.0s
+Evaluated 00000015: Top-1=59.30%
+Evaluated 00000017: Top-1=92.27%
+Evaluated 00000023: Top-1=94.10%
+Evaluated 00000030: Top-1=79.20%
+Evaluated 00000049: Top-1=98.26%
+Evaluated 00000059: Top-1=95.34%
+Evaluated 00000067: Top-1=89.85%
+Evaluated 00000073: Top-1=97.03%
+Evaluated 00000087: Top-1=94.07%
+Evaluated 00000094: Top-1=86.72%
+{
+  "top1_accuracy": 0.8076120694041622,
+  "top1_accuracy_reference_present": 0.8076120694041622,
+  "candidate_miss_rate": 0.0,
+  "macro_f1": 0.8918321913981762,
+  "log_loss": 0.05946824657929488,
+  "known_observations": 19653,
+  "unresolved_observations": 21,
+  "reference_present_observations": 19653,
+  "zero_candidate_observations": 0,
+  "trips": 10,
+  "observations": 19674,
+  "candidate_rows": 302571,
+  "correct_known_observations": 15872,
+  "reference_coverage": 0.9989326014028668,
+  "mean_trip_top1_accuracy": 0.886147364193443,
+  "nearest_top1_accuracy": 0.4980410115503994,
+  "prediction_seconds": 17.30109767399881,
+  "note": "Classifier and RF+HMM pointwise accuracy on identical valid derived references",
+  "hmm_top1_accuracy": 0.9079021014603369,
+  "hmm_correct_known_observations": 17843,
+  "mean_trip_hmm_top1_accuracy": 0.9410836300546924
+}

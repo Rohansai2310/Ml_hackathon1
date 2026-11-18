@@ -8,9 +8,9 @@ route arc with a monotone dynamic programme:
 
 i.e. the vehicle can only move forward along the reference route (a point may stay on
 the same arc, or jump ahead, never go back). Solved exactly in O(N*M) with a running
-prefix-minimum. This uses ONLY training/student-test data and is never used at
-inference. Caveat (documented in the report): this is a derived label, so label noise
-exists wherever the GPS jumps by more than the CAP.
+prefix-minimum. Used for training labels and isolated reference-based evaluation,
+never for inference. Evaluator references are read only after predictions freeze.
+Caveat: these are derived labels; route alignment can introduce label noise.
 """
 import numpy as np
 from .geo import point_segment

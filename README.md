@@ -1,7 +1,28 @@
-# PathSnap - GPS map-matching (data, candidates & features stage)
+# PathSnap - GPS map matching
 
 Noisy GPS points -> road-network arcs. Pipeline: **raw files -> candidate arcs per GPS point -> features -> classifier -> HMM/Viterbi -> route -> API/UI**.
-This repository includes preprocessing, candidate generation, feature engineering and classifier training. HMM/Viterbi is the next implementation stage. Start with [the HMM/Viterbi handoff](docs/HMM_VITERBI_HANDOFF.md).
+This repository includes preprocessing, candidate generation, feature engineering,
+classifier training, metric HMM/Viterbi decoding and a FastAPI inference backend.
+See [the HMM review and usage guide](docs/hmm_review.md) for integration details.
+
+Start two-client integration with [the shared backend API contract](docs/CLIENT_API.md).
+[Training-only HMM tuning](docs/hmm_tuning.md) runs separately and can update the
+decoder without changing the client request/response contract.
+
+The [training-selected decoder](outputs/experiments/hmm_tuning_001/README.md)
+reached **92.19% student-test Top-1** and **90.79% on the repeat evaluator benchmark**.
+Its configuration is included in the repository and can be loaded by the shared
+backend. The evaluator set was already examined; it was not used to tune settings.
+
+Random Forest is now the selected classifier. See [selected-model fitting and
+evaluator-test evaluation](docs/random_forest_evaluation.md) for the fixed-model
+workflow. The earlier project PDF and four-model archive describe the preceding
+snapshot; evaluator results are recorded in a separate experiment archive.
+
+The original untuned [RF versus RF + HMM evaluator benchmark](outputs/experiments/evaluator_test_rf_hmm_001/README.md)
+records 80.76% versus 75.41% pointwise Top-1 on valid derived references. HMM
+produces connected route segments, but these untuned decoder settings did not
+improve pointwise accuracy. See the archive for per-trip results and coverage.
 
 ## 1. Where to extract the dataset
 Extract `Student_folder.zip` so the repo looks like this (the zip contains a folder called `Student folder` - move its two sub-folders):

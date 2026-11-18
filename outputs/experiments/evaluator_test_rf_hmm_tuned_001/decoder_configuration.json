@@ -1,0 +1,25 @@
+{
+  "decoder_parameters": {
+    "beta": 25.0,
+    "same_arc_jitter_m": 15.0,
+    "emission_mode": "probability"
+  },
+  "model_sha256": "726b503c4ec431232411dcc94f2b443156d6ea43f2ee7bf0fcb8e19a29dc2399",
+  "selection_basis": "Best mean-fold Top-1 on all eligible training OOF trips among screened finalists",
+  "training_trial": 5,
+  "training_metrics": {
+    "trial": 5,
+    "beta": 25.0,
+    "same_arc_jitter_m": 15.0,
+    "emission_mode": "probability",
+    "mean_fold_top1": 0.9147249256414357,
+    "pooled_top1": 0.9147995462468528,
+    "mean_trip_top1": 0.9229760303792404,
+    "correct": 165318,
+    "known": 180715,
+    "trips": 78,
+    "segments": 398,
+    "seconds": 97.44982009299974
+  },
+  "evaluator_used_for_selection": false
+}

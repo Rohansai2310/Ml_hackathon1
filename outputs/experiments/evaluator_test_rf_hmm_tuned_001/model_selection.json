@@ -1,0 +1,7 @@
+{
+  "model": "random_forest",
+  "final_artifact": "pipeline.joblib",
+  "model_sha256": "726b503c4ec431232411dcc94f2b443156d6ea43f2ee7bf0fcb8e19a29dc2399",
+  "selection_basis": "User selected Random Forest from recorded baseline CV; no new tuning",
+  "tuned": false
+}

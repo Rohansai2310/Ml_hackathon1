@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "trip_id": "00000023",
+  "model_used": "RandomForestClassifier",
+  "gps_points": 458,
+  "route_segments": 1,
+  "matches_saved_benchmark": true,
+  "host": "127.0.0.1",
+  "port": 8077
+}

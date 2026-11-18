@@ -1,0 +1,34 @@
+Loading original training OOF predictions and metric road graphs...
+Screen 1/25: {'beta': 50.0, 'same_arc_jitter_m': 0.0, 'emission_mode': 'probability'} -> fold Top-1 85.74% (8.2s)
+Screen 2/25: {'beta': 25.0, 'same_arc_jitter_m': 0.0, 'emission_mode': 'probability'} -> fold Top-1 85.52% (8.3s)
+Screen 3/25: {'beta': 25.0, 'same_arc_jitter_m': 0.0, 'emission_mode': 'log_odds'} -> fold Top-1 85.75% (8.2s)
+Screen 4/25: {'beta': 25.0, 'same_arc_jitter_m': 5.0, 'emission_mode': 'probability'} -> fold Top-1 91.03% (8.2s)
+Screen 5/25: {'beta': 25.0, 'same_arc_jitter_m': 5.0, 'emission_mode': 'log_odds'} -> fold Top-1 90.93% (8.2s)
+Screen 6/25: {'beta': 25.0, 'same_arc_jitter_m': 15.0, 'emission_mode': 'probability'} -> fold Top-1 93.66% (8.2s)
+Screen 7/25: {'beta': 25.0, 'same_arc_jitter_m': 15.0, 'emission_mode': 'log_odds'} -> fold Top-1 93.47% (8.2s)
+Screen 8/25: {'beta': 100.0, 'same_arc_jitter_m': 0.0, 'emission_mode': 'probability'} -> fold Top-1 85.56% (8.2s)
+Screen 9/25: {'beta': 100.0, 'same_arc_jitter_m': 0.0, 'emission_mode': 'log_odds'} -> fold Top-1 85.64% (8.1s)
+Screen 10/25: {'beta': 100.0, 'same_arc_jitter_m': 5.0, 'emission_mode': 'probability'} -> fold Top-1 90.19% (8.2s)
+Screen 11/25: {'beta': 100.0, 'same_arc_jitter_m': 5.0, 'emission_mode': 'log_odds'} -> fold Top-1 90.04% (8.2s)
+Screen 12/25: {'beta': 100.0, 'same_arc_jitter_m': 15.0, 'emission_mode': 'probability'} -> fold Top-1 92.56% (8.2s)
+Screen 13/25: {'beta': 100.0, 'same_arc_jitter_m': 15.0, 'emission_mode': 'log_odds'} -> fold Top-1 92.39% (8.2s)
+Screen 14/25: {'beta': 500.0, 'same_arc_jitter_m': 0.0, 'emission_mode': 'probability'} -> fold Top-1 85.21% (8.2s)
+Screen 15/25: {'beta': 500.0, 'same_arc_jitter_m': 0.0, 'emission_mode': 'log_odds'} -> fold Top-1 85.26% (8.2s)
+Screen 16/25: {'beta': 500.0, 'same_arc_jitter_m': 5.0, 'emission_mode': 'probability'} -> fold Top-1 89.38% (8.3s)
+Screen 17/25: {'beta': 500.0, 'same_arc_jitter_m': 5.0, 'emission_mode': 'log_odds'} -> fold Top-1 89.38% (8.3s)
+Screen 18/25: {'beta': 500.0, 'same_arc_jitter_m': 15.0, 'emission_mode': 'probability'} -> fold Top-1 91.54% (8.5s)
+Screen 19/25: {'beta': 500.0, 'same_arc_jitter_m': 15.0, 'emission_mode': 'log_odds'} -> fold Top-1 91.51% (8.4s)
+Screen 20/25: {'beta': 2000.0, 'same_arc_jitter_m': 0.0, 'emission_mode': 'probability'} -> fold Top-1 84.83% (8.2s)
+Screen 21/25: {'beta': 2000.0, 'same_arc_jitter_m': 0.0, 'emission_mode': 'log_odds'} -> fold Top-1 84.87% (8.3s)
+Screen 22/25: {'beta': 2000.0, 'same_arc_jitter_m': 5.0, 'emission_mode': 'probability'} -> fold Top-1 88.95% (8.2s)
+Screen 23/25: {'beta': 2000.0, 'same_arc_jitter_m': 5.0, 'emission_mode': 'log_odds'} -> fold Top-1 88.88% (8.2s)
+Screen 24/25: {'beta': 2000.0, 'same_arc_jitter_m': 15.0, 'emission_mode': 'probability'} -> fold Top-1 91.02% (8.2s)
+Screen 25/25: {'beta': 2000.0, 'same_arc_jitter_m': 15.0, 'emission_mode': 'log_odds'} -> fold Top-1 90.96% (8.3s)
+Full training OOF trial 0: 77.23%, RF baseline 85.63%
+Full training OOF trial 5: 91.47%, RF baseline 85.63%
+Full training OOF trial 6: 90.92%, RF baseline 85.63%
+Full training OOF trial 11: 90.14%, RF baseline 85.63%
+Frozen selected settings: {'beta': 25.0, 'same_arc_jitter_m': 15.0, 'emission_mode': 'probability'}
+Student-test random_forest: 87.27%
+Student-test original_hmm: 84.82%
+Student-test selected_hmm: 92.19%
