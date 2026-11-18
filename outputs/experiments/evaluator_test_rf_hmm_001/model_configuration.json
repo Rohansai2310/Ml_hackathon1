@@ -1,0 +1,70 @@
+{
+  "features": [
+    "dist_m",
+    "frac_along",
+    "arc_len_m",
+    "dist_rank",
+    "dist_rel_min",
+    "n_cand",
+    "heading_diff_deg",
+    "cos_heading",
+    "speed_mps",
+    "dt_prev",
+    "dt_next",
+    "win_mean_dist",
+    "win_max_dist",
+    "win_min_dist",
+    "win_hit_frac",
+    "out_deg_to",
+    "in_deg_from",
+    "has_reverse",
+    "to_node_dist_m",
+    "from_node_dist_m",
+    "along_advance_m",
+    "speed_dist_resid"
+  ],
+  "tuning_parameters": {},
+  "pipeline_parameters": {
+    "memory": null,
+    "steps": [
+      [
+        "imputer",
+        "SimpleImputer(keep_empty_features=True, strategy='median')"
+      ],
+      [
+        "classifier",
+        "RandomForestClassifier(n_estimators=200, n_jobs=2, random_state=42)"
+      ]
+    ],
+    "transform_input": null,
+    "verbose": false,
+    "imputer": "SimpleImputer(keep_empty_features=True, strategy='median')",
+    "classifier": "RandomForestClassifier(n_estimators=200, n_jobs=2, random_state=42)",
+    "imputer__add_indicator": false,
+    "imputer__copy": true,
+    "imputer__fill_value": null,
+    "imputer__keep_empty_features": true,
+    "imputer__missing_values": "nan",
+    "imputer__strategy": "median",
+    "classifier__bootstrap": true,
+    "classifier__ccp_alpha": 0.0,
+    "classifier__class_weight": null,
+    "classifier__criterion": "gini",
+    "classifier__max_depth": null,
+    "classifier__max_features": "sqrt",
+    "classifier__max_leaf_nodes": null,
+    "classifier__max_samples": null,
+    "classifier__min_impurity_decrease": 0.0,
+    "classifier__min_samples_leaf": 1,
+    "classifier__min_samples_split": 2,
+    "classifier__min_weight_fraction_leaf": 0.0,
+    "classifier__monotonic_cst": null,
+    "classifier__n_estimators": 200,
+    "classifier__n_jobs": 2,
+    "classifier__oob_score": false,
+    "classifier__random_state": 42,
+    "classifier__verbose": 0,
+    "classifier__warm_start": false
+  },
+  "score": "Positive-class probability per candidate; not normalised across candidates"
+}

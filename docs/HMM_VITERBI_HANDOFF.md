@@ -1,5 +1,10 @@
 # HMM/Viterbi starting point
 
+Update: Random Forest has been refitted, and the person-3 HMM/API implementation
+has been merged and corrected. See [hmm_review.md](hmm_review.md) and the
+[measured evaluator comparison](../outputs/experiments/evaluator_test_rf_hmm_001/README.md).
+The original four-model status below is an archived handoff snapshot.
+
 ## Current status
 
 Preprocessing and classifier training code are available. Four baseline models

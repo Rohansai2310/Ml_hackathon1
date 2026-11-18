@@ -10,6 +10,7 @@ outputs/features/*.parquet
 .qodo/
 outputs/training/
 outputs/kaggle/
+outputs/evaluation/
 
 # Local environments, credentials, editor state and generated caches
 .env
